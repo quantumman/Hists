@@ -2,6 +2,7 @@
 
 module Model.Git.Internal
        ( Git
+       , git
        , raiseError
        )
        where
@@ -9,6 +10,7 @@ module Model.Git.Internal
 import Bindings.Libgit2.Errors
 import Bindings.Libgit2.Threads
 import Control.Applicative
+import Control.Exception (SomeException(..))
 import Control.Monad
 import Control.Monad.Error
 import Control.Monad.Reader
@@ -26,6 +28,25 @@ newtype Git m a = Git (ErrorT String (ReaderT Repository m) a)
            , MonadError String
            , MonadReader Repository
            )
+
+git :: (Functor m, MonadCatchIO m, MonadIO m)
+       => FilePath
+       -> Git m a
+       -> m (Either String a)
+git filepath action =
+  flip runReaderT neverEvaluated . runErrorT $ unGit go `CatchIO.catch` rethrow
+  where
+    unGit (Git g) = g
+
+    rethrow :: Monad m => SomeException -> m a
+    rethrow (SomeException e) = fail . show $ e
+
+    neverEvaluated = undefined
+
+    go = do
+      initializeThreads
+      repository <- openOrCreate filepath
+      local (const repository) action
 
 raiseError :: MonadIO m => m a
 raiseError = liftIO $ do
