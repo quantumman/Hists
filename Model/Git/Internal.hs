@@ -33,3 +33,16 @@ raiseError = liftIO $ do
   fail =<< case msg' of
     Nothing  -> return "unknow error"
     Just err -> peekCString $ c'git_error'message err
+
+openOrCreate :: MonadIO m => FilePath -> Git m Repository
+openOrCreate path = liftIO $ do
+  withCString path $ \path' ->
+    alloca $ \repository -> do
+      r <- c'git_repository_open repository path'
+      when (r < 0) $ do
+        r <- c'git_repository_init repository path' ctrue
+        when (r < 0) raiseError
+      repository' <- peek repository
+      newForeignPtr p'git_repository_free repository'
+  where
+    ctrue = fromIntegral 1
