@@ -4,6 +4,7 @@ module Model.Git.Internal
        ( Git
        , git
        , raiseError
+       , repository
        )
        where
 
@@ -47,6 +48,9 @@ git filepath action =
       initializeThreads
       repository <- openOrCreate filepath
       local (const repository) action
+
+repository :: MonadIO m => Git m Repository
+repository = ask
 
 raiseError :: MonadIO m => m a
 raiseError = liftIO $ do
