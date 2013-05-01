@@ -11,3 +11,6 @@ data GitObject = Tree
                | Blob
                | Commit
   deriving (Show)
+
+data Oid (a :: GitObject) = Oid (ForeignPtr C'git_oid)
+  deriving (Show)
