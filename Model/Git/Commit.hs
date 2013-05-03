@@ -1,5 +1,6 @@
 module Model.Git.Commit
        ( Author
+       , Committer
        )
        where
 
@@ -11,6 +12,8 @@ import Model.Git.Signature
 
 
 type Author = Signature
+
+type Committer = Signature
 
 withForeignPtrs :: [ForeignPtr a] -> ([Ptr a] -> IO b) -> IO b
 withForeignPtrs fptrs f = do
