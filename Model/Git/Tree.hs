@@ -5,6 +5,7 @@ module Model.Git.Tree where
 
 import Bindings.Libgit2.Tree
 import Bindings.Libgit2.Types
+import Control.Applicative
 import Control.Monad
 import Control.Monad.IO.Class
 import Foreign
@@ -40,3 +41,13 @@ create = liftIO $ do
     when (r < 0) raiseError
     ptr' <- peek ptr
     newForeignPtr p'git_treebuilder_free ptr'
+
+write :: MonadIO m => TreeBuilder -> Git m (Oid Tree)
+write builder = do
+  repo <- repository
+  liftIO $ withForeignPtr repo $ \repository' ->
+    withForeignPtr builder $ \builder'              ->
+    alloca $ \oid -> do
+      r <- c'git_treebuilder_write oid repository' builder'
+      when (r < 0) raiseError
+      Oid <$> newForeignPtr_ oid
