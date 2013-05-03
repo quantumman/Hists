@@ -1,5 +1,6 @@
 module Model.Git.Signature
        ( Signature
+       , Email
        )
        where
 
@@ -8,3 +9,5 @@ import Foreign
 
 
 type Signature = ForeignPtr C'git_signature
+
+type Email = String
