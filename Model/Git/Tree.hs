@@ -37,6 +37,9 @@ class GitTreeable (a :: GitObject) where
 instance GitTreeable Tree where
   filemode = const 0o040000
 
+instance GitTreeable Blob where
+  filemode = const 0o100644
+
 
 create :: MonadIO m => Git m TreeBuilder
 create = liftIO $ do
