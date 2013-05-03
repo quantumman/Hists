@@ -1,8 +1,16 @@
-module Model.Git.Commit where
+module Model.Git.Commit
+       ( Author
+       )
+       where
 
+import Control.Monad (forM)
 import Foreign
-import Control.Monad
+import Foreign.C.String
 
+import Model.Git.Signature
+
+
+type Author = Signature
 
 withForeignPtrs :: [ForeignPtr a] -> ([Ptr a] -> IO b) -> IO b
 withForeignPtrs fptrs f = do
