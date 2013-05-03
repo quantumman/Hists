@@ -34,6 +34,10 @@ class GitTreeable (a :: GitObject) where
       when (r < 0) raiseError
       return ()
 
+instance GitTreeable Tree where
+  filemode = const 0o040000
+
+
 create :: MonadIO m => Git m TreeBuilder
 create = liftIO $ do
   alloca $ \ptr -> do
