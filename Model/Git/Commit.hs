@@ -3,6 +3,7 @@ module Model.Git.Commit
        , Committer
        , Parents
        , UpdateRef
+       , Message
        )
        where
 
@@ -20,6 +21,8 @@ type Committer = Signature
 type Parents = [Oid Commit]
 
 type UpdateRef = String
+
+type Message = String
 
 withForeignPtrs :: [ForeignPtr a] -> ([Ptr a] -> IO b) -> IO b
 withForeignPtrs fptrs f = do
