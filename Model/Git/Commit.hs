@@ -1,4 +1,5 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Model.Git.Commit
        ( Author
@@ -16,13 +17,20 @@ import Control.Applicative
 import Control.Exception (bracket)
 import Control.Monad (forM, forM_, when)
 import Control.Monad.IO.Class
+import Data.Functor
+import Data.List (dropWhileEnd)
+import Data.Text (Text, unpack)
 import Foreign
 import Foreign.C.String
+import System.Directory.Layout.Internal
+import System.FilePath
 
+import Model.Git.Blob
 import Model.Git.Internal
 import Model.Git.Oid
 import Model.Git.Repository
 import Model.Git.Signature
+import Model.Git.Tree
 
 
 type Author = Signature
@@ -113,3 +121,27 @@ withForeignPtrs :: [ForeignPtr a] -> ([Ptr a] -> IO b) -> IO b
 withForeignPtrs fptrs f = do
   ptrs <- forM fptrs $ flip withForeignPtr return
   f ptrs
+
+makeTree :: (Functor m, MonadIO m) => Layout -> Git m (Oid Tree)
+makeTree layout = do
+  treeBuilder <- create
+  makeTrees layout >>= mapM_ (insert' treeBuilder)
+  write treeBuilder
+  where
+    insert' tb = either (uncurry $ insert tb) (uncurry $ insert tb)
+
+    makeTrees :: (Functor m, MonadIO m)
+                 => Layout
+                 -> Git m [Either (FilePath, Oid Blob) (FilePath, Oid Tree)]
+    makeTrees (E _) = return []
+    makeTrees (F filePath (E _) x)   = return []
+    makeTrees (F filePath (T t _) x) = do
+      blobs <- makeTrees x
+      blob <- Left <$> (,) filePath <$> blob (unpack t)
+      return $ blob:blobs
+    makeTrees (D filePath x y)       = do
+      treeBuilder <- create
+      makeTrees x >>= mapM_ (insert' treeBuilder)
+      trees <- makeTrees y
+      tree <- Right <$> (,) filePath <$> write treeBuilder
+      return $ tree:trees
