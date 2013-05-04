@@ -7,6 +7,8 @@ module Model.Git.Commit
        , Parents
        , UpdateRef
        , Message
+       , commit
+       , directory
        , file
        )
        where
@@ -44,6 +46,22 @@ type Parents = [Oid Commit]
 type UpdateRef = String
 
 type Message = String
+
+commit :: (Functor m, MonadIO m)
+          => Author
+          -> Committer
+          -> Parents
+          -> Maybe UpdateRef
+          -> Message
+          -> Layout
+          -> Git m (Oid Commit)
+commit author committer parents updateRef message layout =
+  makeTree layout >>= \tree -> commit' tree
+                                       author
+                                       committer
+                                       parents
+                                       updateRef
+                                       message
 
 commit' :: MonadIO m
            => Oid Tree
