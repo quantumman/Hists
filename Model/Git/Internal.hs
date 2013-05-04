@@ -7,6 +7,7 @@ module Model.Git.Internal
        where
 
 import Bindings.Libgit2.Errors
+import Bindings.Libgit2.Threads
 import Control.Applicative
 import Control.Monad
 import Control.Monad.Error
@@ -46,3 +47,8 @@ openOrCreate path = liftIO $ do
       newForeignPtr p'git_repository_free repository'
   where
     ctrue = fromIntegral 1
+
+initializeThreads :: MonadIO m => Git m ()
+initializeThreads = liftIO $ do
+  r <- c'git_threads_init
+  when (r < 0) $ raiseError
