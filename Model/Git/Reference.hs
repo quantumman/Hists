@@ -1,1 +1,7 @@
-module Model.Git.Reference where
+module Model.Git.Reference
+       ( ReferenceName
+       )
+       where
+
+
+type ReferenceName = String
