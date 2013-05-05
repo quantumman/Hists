@@ -13,12 +13,13 @@ import Foreign.C
 import Foreign.C.Types
 
 import Model.Git.Internal
-import Model.Git.Oid
+import Model.Git.Oid (Oid(..))
+import qualified Model.Git.Oid as Oid (GitObject(..))
 
 
 type TreeBuilder = ForeignPtr C'git_treebuilder
 
-class GitTreeable (a :: GitObject) where
+class GitTreeable (a :: Oid.GitObject) where
   filemode :: Oid a -> CUInt
 
   insert :: (MonadIO m) => TreeBuilder -> String -> Oid a -> Git m ()
@@ -34,10 +35,10 @@ class GitTreeable (a :: GitObject) where
       when (r < 0) raiseError
       return ()
 
-instance GitTreeable Tree where
+instance GitTreeable Oid.Tree where
   filemode = const 0o040000
 
-instance GitTreeable Blob where
+instance GitTreeable Oid.Blob where
   filemode = const 0o100644
 
 
@@ -49,7 +50,7 @@ create = liftIO $ do
     ptr' <- peek ptr
     newForeignPtr p'git_treebuilder_free ptr'
 
-write :: MonadIO m => TreeBuilder -> Git m (Oid Tree)
+write :: MonadIO m => TreeBuilder -> Git m (Oid Oid.Tree)
 write builder = do
   repo <- repository
   liftIO $ withForeignPtr repo $ \repository' ->
