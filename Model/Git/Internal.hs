@@ -13,6 +13,8 @@ import Bindings.Libgit2.Threads
 import Control.Applicative
 import Control.Exception (SomeException(..))
 import Control.Monad
+import Control.Monad.CatchIO (MonadCatchIO(..))
+import qualified Control.Monad.CatchIO as CatchIO (catch)
 import Control.Monad.Error
 import Control.Monad.Reader
 import Foreign
@@ -26,6 +28,7 @@ newtype Git m a = Git (ErrorT String (ReaderT Repository m) a)
            , Applicative
            , Monad
            , MonadIO
+           , MonadCatchIO
            , MonadError String
            , MonadReader Repository
            )
