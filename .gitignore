@@ -6,3 +6,8 @@ config/client_session_key.aes
 *.sqlite3
 .hsenv*
 yesod-devel/
+
+# files
+.DS_Store
+._.DS_Store
+.fuse_*
