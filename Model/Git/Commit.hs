@@ -23,7 +23,7 @@ import Data.List (dropWhileEnd)
 import Data.Text (Text, unpack)
 import Foreign
 import Foreign.C.String
-import qualified System.Directory.Layout as Layout (file)
+import qualified System.Directory.Layout as Layout (file, directory)
 import System.Directory.Layout.Internal
 import System.FilePath
 
@@ -150,3 +150,6 @@ makeTree layout = do
 
 file :: FilePath -> Text -> Layout
 file = Layout.file
+
+directory :: FilePath -> Layout -> Layout
+directory = Layout.directory
