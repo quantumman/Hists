@@ -7,6 +7,7 @@ module Model.Git.Commit
        , Parents
        , UpdateRef
        , Message
+       , file
        )
        where
 
@@ -22,6 +23,7 @@ import Data.List (dropWhileEnd)
 import Data.Text (Text, unpack)
 import Foreign
 import Foreign.C.String
+import qualified System.Directory.Layout as Layout (file)
 import System.Directory.Layout.Internal
 import System.FilePath
 
@@ -145,3 +147,6 @@ makeTree layout = do
       trees <- makeTrees y
       tree <- Right <$> (,) filePath <$> write treeBuilder
       return $ tree:trees
+
+file :: FilePath -> Text -> Layout
+file = Layout.file
