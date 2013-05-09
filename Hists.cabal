@@ -66,7 +66,7 @@ library
                  , conduit                       >= 1.0
                  , monad-logger                  >= 0.3
                  , fast-logger                   >= 0.3
-                 , hlibgit2                      == 17.0.*
+                 , hlibgit2                      == 0.18.*
 
 executable         Hists
     if flag(library-only)
