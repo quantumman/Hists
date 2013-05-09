@@ -91,3 +91,4 @@ test-suite test
                  , yesod-test >= 0.3 && < 0.4
                  , yesod-default
                  , yesod-core
+                 , hspec >= 1.4
