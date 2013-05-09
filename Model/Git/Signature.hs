@@ -1,5 +1,6 @@
 module Model.Git.Signature
-       ( Signature
+       ( module GitTime
+       , Signature
        , Email
        , Name
        , sign
@@ -15,7 +16,7 @@ import Foreign
 import Foreign.C.String
 
 import Model.Git.Internal
-import Model.Git.Signature.Time
+import Model.Git.Signature.Time as GitTime
 
 
 type Signature = ForeignPtr C'git_signature
