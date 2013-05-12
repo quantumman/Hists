@@ -92,3 +92,4 @@ test-suite test
                  , yesod-default
                  , yesod-core
                  , hspec >= 1.4
+                 , temporary == 1.1.*
