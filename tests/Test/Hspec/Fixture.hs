@@ -5,6 +5,9 @@ import System.IO.Temp (withSystemTempDirectory)
 import Test.Hspec
 
 
+hspecIO :: IO Spec -> IO ()
+hspecIO = (hspec =<<)
+
 describe' :: String -> IO Spec -> IO Spec
 describe' msg = (return . describe msg =<<)
 
